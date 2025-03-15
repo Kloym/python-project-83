@@ -4,6 +4,9 @@ install:
 dev:
 	uv run flask --debug --app page_analyzer:app run
 
+reinstall:
+	python3 -m pip install --user dist/*.whl --force-reinstall
+
 lint:
 	uv run flake8
 
