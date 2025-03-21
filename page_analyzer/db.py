@@ -1,5 +1,6 @@
 import psycopg2
 from psycopg2.extras import RealDictCursor
+from datetime import datetime
 
 
 def connect_db(DATABASE_URL):
@@ -9,9 +10,9 @@ def close(conn):
     conn.close()
 
 def get_all_urls(conn):
-    with conn.cursor(cursor_factory=RealDictCursor) as cursor:
-        cursor.execute(
-            '''
+    with conn.cursor(cursor_factory=RealDictCursor) as curs:
+        curs.execute(
+            """
             SELECT
                 urls.id,
                 urls.name,
@@ -28,18 +29,19 @@ def get_all_urls(conn):
             ) AS last_checks
             ON urls.id = last_checks.url_id
             ORDER BY urls.id;
-            '''
+            """
         )
-        urls = cursor.fetchall()
+        urls = curs.fetchall()
         return urls
 
 def insert_url(conn, url):
     with conn.cursor(cursor_factory=RealDictCursor) as cursor:
         cursor.execute(
             '''
-            INSERT INTO urls (name) VALUES (%s) 
+            INSERT INTO urls (name) VALUES (%s)
             RETURNING id
-            '''
+            ''',
+            (url,)
         )
         id = cursor.fetchone()['id']
         conn.commit()
@@ -78,4 +80,17 @@ def check_url(conn, name):
             (name,),
         )
         return cursor.fetchone()
+    
+def insert_check(conn, url_id, status_code, h1=None, title=None,
+                 description=None):
+    with conn.cursor(cursor_factory=RealDictCursor) as curs:
+        curs.execute(
+            """
+            INSERT INTO
+            url_checks (url_id, status_code, h1, title, description)
+            VALUES (%s, %s, %s, %s, %s)
+            """,
+            (url_id, status_code, h1, title, description),
+        )
+        conn.commit()
         

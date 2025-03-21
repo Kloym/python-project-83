@@ -1,34 +1,30 @@
-import urllib.parse
+from urllib.parse import urlparse
 from bs4 import BeautifulSoup
-
+from validators.url import url as validate_url
 
 
 def normalize_url(url):
-    parsed_url = urllib.parse.urlparse(url)
-    return f"{parsed_url.scheme}://{parsed_url.netloc}"
+    result = urlparse(url)
+    new_result = result._replace(path='', params='', query='', fragment='')
+    return new_result.geturl()
 
 def parse_html(html):
-    soup = BeautifulSoup(html.txt, 'lxml')
-    h1 = soup.h1.string if soup.h1 else None
-    title = soup.title.string if soup.title else None
-    description_tag = soup.find("meta", attrs={"name": "description"})
-    description = description_tag["content"] if description_tag else None
-    return {'h1': h1, 'title': title, 'description': description}
+    soup = BeautifulSoup(html.text, 'lxml')
+    title = soup.find('title')
+    h1 = soup.find('h1')
+    description = soup.find('meta', attrs={'name': 'description'})
+    return {'title': title.text if title else None,
+                'h1': h1.text if h1 else None,
+                'description': description['content']
+                if description and 'content' in description.attrs else None}
 
 def validate(url):
     errors = {}
-    if 'url' not in url or not url['url']:
+    if not url:
         errors['url'] = 'URL не должен быть пустым'
-    elif len(url['url']) >= 255:
+    elif len(url) >= 255:
         errors['url'] = 'URL должен быть короче 255 символов'
-    elif not url["url"].startswith(("http://", "https://")):
+    elif not validate_url(url):
         errors['url'] = 'Некорректный URL'
-    else:
-        try:
-            result = urllib.parse.urlparse(url['url'])
-            if not result.netloc():
-                raise ValueError('Некорретный URL')
-        except ValueError:
-            errors['url'] = 'Некорректный URL'
     return errors
 
