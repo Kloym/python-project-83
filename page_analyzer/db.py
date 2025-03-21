@@ -12,22 +12,7 @@ def get_all_urls(conn):
     with conn.cursor(cursor_factory=RealDictCursor) as cursor:
         cursor.execute(
             '''
-            SELECT
-                urls.id,
-                urls.name,
-                last_checks.created_at,
-                last_checks.status_code
-            FROM urls
-            LEFT JOIN (
-                SELECT DISTINCT ON (url_id)
-                    url_id,
-                    created_at,
-                    status_code
-                FROM url_checks
-                ORDER BY url_id, created_at DESC
-            ) AS last_checks
-            ON urls.id = last_checks.url_id
-            ORDER BY urls.id;
+           SELECT * FROM urls
             '''
         )
         urls = cursor.fetchall()
