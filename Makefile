@@ -1,3 +1,7 @@
+PORT ?= 9000
+WORKERS ?= 5
+.PHONY: install start-dev start lint build
+
 install:
 	uv sync
 
@@ -11,11 +15,11 @@ lint:
 	uv run flake8
 
 start:
-	uv run gunicorn -w 5 -b 0.0.0.0:$(PORT) page_analyzer:app
+	poetry run flask --app page_analyzer:app --debug run
 
 build:
 	./build.sh
 
 render-start:
-	eval ". .venv/bin/activate && /opt/render/project/src/.venv/bin/gunicorn -w 5 -b 0.0.0.0:$(PORT) page_analyzer:app"
+	poetry run gunicorn --daemon -w $(WORKERS) -b 0.0.0.0:$(PORT) page_analyzer:app
 
