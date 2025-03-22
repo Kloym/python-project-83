@@ -3,3 +3,6 @@
 curl -LsSf https://astral.sh/uv/install.sh | sh
 source $HOME/.local/bin/env
 make install
+#!/bin/bash
+echo "Finding gunicorn path..."
+which gunicorn
