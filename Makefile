@@ -17,5 +17,5 @@ build:
 	./build.sh
 
 render-start:
-	/opt/render/project/src/.venv/bin/gunicorn -w 5 -b 0.0.0.0:$(PORT) page_analyzer:app
+	source .venv/bin/activate && /opt/render/project/src/.venv/bin/gunicorn -w 5 -b 0.0.0.0:$(PORT) page_analyzer:app
 
