@@ -6,12 +6,10 @@ import psycopg2
 import requests
 
 
-
-
-load_dotenv() 
+load_dotenv()
 app = Flask(__name__)
-app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
-DATABASE_URL = os.getenv('DATABASE')
+app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
+DATABASE_URL = os.getenv("DATABASE")
 conn = psycopg2.connect(DATABASE_URL)
 
 
@@ -21,30 +19,33 @@ def index():
     errors = {}
     return render_template("index.html", url=url, errors=errors)
 
+
 @app.post("/urls")
 def add_url():
-    url = request.form.get('url')
+    url = request.form.get("url")
     errors = utils.validate(url)
     conn = db.connect_db(DATABASE_URL)
     if errors:
-        flash(errors, 'danger')
+        flash(errors, "danger")
     result = utils.normalize_url(url)
     if existed := db.check_url(conn, result):
-        id = existed.get('id')
-        flash('Страница уже существует', 'info')
+        id = existed.get("id")
+        flash("Страница уже существует", "info")
     else:
         id = db.insert_url(conn, result)
         conn.commit()
         conn.close()
-        flash('Страница успешно добавлена', 'success')
-    return redirect(url_for('show_url', id=id))
+        flash("Страница успешно добавлена", "success")
+    return redirect(url_for("show_url", id=id))
 
-@app.route('/urls')
+
+@app.route("/urls")
 def show_urls():
     conn = db.connect_db(DATABASE_URL)
     urls = db.get_all_urls(conn)
     db.close(conn)
-    return render_template('/url.html', urls=urls, id=id)
+    return render_template("/url.html", urls=urls, id=id)
+
 
 @app.route("/urls/<int:id>")
 def show_url(id):
@@ -52,9 +53,9 @@ def show_url(id):
     url = db.find(conn, id)
     if not url:
         db.close(conn)
-        abort(404, description='URL не найден')
+        abort(404, description="URL не найден")
     db.close(conn)
-    return render_template('/urls.html', url=url)
+    return render_template("/urls.html", url=url)
 
 
 @app.post("/urls/<int:id>/checks")
@@ -93,6 +94,3 @@ def check_url(id):
 
 if __name__ == "__main__":
     app.run(debug=True)
-        
-    
-

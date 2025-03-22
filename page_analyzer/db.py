@@ -6,8 +6,10 @@ from datetime import datetime
 def connect_db(DATABASE_URL):
     return psycopg2.connect(DATABASE_URL)
 
+
 def close(conn):
     conn.close()
+
 
 def get_all_urls(conn):
     with conn.cursor(cursor_factory=RealDictCursor) as curs:
@@ -34,32 +36,35 @@ def get_all_urls(conn):
         urls = curs.fetchall()
         return urls
 
+
 def insert_url(conn, url):
+    now = datetime.now().date()
     with conn.cursor(cursor_factory=RealDictCursor) as cursor:
         cursor.execute(
-            '''
-            INSERT INTO urls (name) VALUES (%s)
+            """
+            INSERT INTO urls (name, created_at) VALUES (%s, %s)
             RETURNING id
-            ''',
-            (url,)
+            """,
+            (url, now),
         )
-        id = cursor.fetchone()['id']
+        id = cursor.fetchone()["id"]
         conn.commit()
         return id
-    
+
+
 def find(conn, url_id):
     with conn.cursor(cursor_factory=RealDictCursor) as cursor:
         cursor.execute(
-            '''
+            """
             SELECT * FROM urls
             WHERE id = %s
-            ''',
+            """,
             (url_id,),
         )
         url = cursor.fetchone()
         if not url:
             return None
-        
+
         cursor.execute(
             """
             SELECT * FROM url_checks
@@ -69,28 +74,29 @@ def find(conn, url_id):
         )
         url["checks"] = cursor.fetchall()
         return url
-    
+
+
 def check_url(conn, name):
     with conn.cursor(cursor_factory=RealDictCursor) as cursor:
         cursor.execute(
-            '''
+            """
             SELECT * FROM urls 
             WHERE name = %s
-            ''',
+            """,
             (name,),
         )
         return cursor.fetchone()
-    
-def insert_check(conn, url_id, status_code, h1=None, title=None,
-                 description=None):
+
+
+def insert_check(conn, url_id, status_code, h1=None, title=None, description=None):
+    now = datetime.now().date()
     with conn.cursor(cursor_factory=RealDictCursor) as curs:
         curs.execute(
             """
             INSERT INTO
-            url_checks (url_id, status_code, h1, title, description)
-            VALUES (%s, %s, %s, %s, %s)
+            url_checks (url_id, status_code, h1, title, description, created_at)
+            VALUES (%s, %s, %s, %s, %s, %s)
             """,
-            (url_id, status_code, h1, title, description),
+            (url_id, status_code, h1, title, description, now),
         )
         conn.commit()
-        
