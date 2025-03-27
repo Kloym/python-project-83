@@ -7,6 +7,7 @@ dev:
 reinstall:
 	python3 -m pip install --user dist/*.whl --force-reinstall
 
+PORT ?= 8000
 start:
 	gunicorn -w 5 -b 0.0.0.0:$(PORT) page_analyzer:app
 
