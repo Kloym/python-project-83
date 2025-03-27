@@ -8,8 +8,9 @@
 
 Сайт проверки сайтов на SEO-пригодность
 Позволяет получить тему, заголовок и описание сайта
+[Ссылка на деплой](https://python-project-83-lnph.onrender.com)
 
-## В проекте использован Python 3.12, Pip 24.0, uv 0.6.5
+## В проекте использован Python 3.11.11, Pip 24.0, uv 0.6.5
 Для разработки использовались следующие инструменты:
 
 Flask — фреймворк для создания веб-приложений на языке программирования Python
@@ -27,6 +28,8 @@ Black - простой и удобный линтер
 git clone https://github.com/Kloym/python-project-83
 cd python-project-83
 ```
+
+## Block Code
 Для хранения конфиденциональной информации создать файл .env в директории 
 page-analyzer 
 
@@ -34,7 +37,7 @@ DATABASE_URL = postgresql://{username}{password}@{host}:{port}/{basename}
 
 SECRET_KEY = "{your_secret_key}"
 
-## Instll
+## Install
 ```python3
 make install
 ```

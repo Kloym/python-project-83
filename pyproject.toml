@@ -1,7 +1,7 @@
 [project]
 name = "python-project-83"
 version = "0.1.0"
-description = "Add your description here"
+description = "this website is analyzes the specified pages for SEO suitability by analogy with"
 readme = "README.md"
 requires-python = "==3.11.11"
 packages = [
