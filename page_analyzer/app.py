@@ -9,8 +9,7 @@ import requests
 load_dotenv()
 app = Flask(__name__)
 app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
-DATABASE_URL = os.getenv("DATABASE_URL")
-conn = psycopg2.connect(DATABASE_URL)
+app.config['DATABASE_URL'] = os.getenv('DATABASE_URL')
 
 
 @app.route("/")
@@ -24,7 +23,7 @@ def index():
 def add_url():
     url = request.form.get("url")
     errors = utils.validate(url)
-    conn = db.connect_db(DATABASE_URL)
+    conn = db.connect_db(app)
     if errors:
         flash(errors, "danger")
     result = utils.normalize_url(url)
@@ -41,7 +40,7 @@ def add_url():
 
 @app.route("/urls")
 def show_urls():
-    conn = db.connect_db(DATABASE_URL)
+    conn = db.connect_db(app)
     urls = db.get_all_urls(conn)
     db.close(conn)
     return render_template("/url.html", urls=urls, id=id)
@@ -49,7 +48,7 @@ def show_urls():
 
 @app.route("/urls/<int:id>")
 def show_url(id):
-    conn = db.connect_db(DATABASE_URL)
+    conn = db.connect_db(app)
     url = db.find(conn, id)
     if not url:
         db.close(conn)
@@ -60,7 +59,7 @@ def show_url(id):
 
 @app.post("/urls/<int:id>/checks")
 def check_url(id):
-    conn = db.connect_db(DATABASE_URL)
+    conn = db.connect_db(app)
     url_data = db.find(conn, id)
     url = url_data["name"]
 

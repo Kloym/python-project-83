@@ -3,8 +3,8 @@ from psycopg2.extras import RealDictCursor
 from datetime import datetime
 
 
-def connect_db(DATABASE_URL):
-    return psycopg2.connect(DATABASE_URL)
+def connect_db(app):
+    return psycopg2.connect(app.config['DATABASE_URL'])
 
 
 def close(conn):
