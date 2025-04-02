@@ -26,6 +26,7 @@ def add_url():
     conn = db.connect_db(app)
     if errors:
         flash(errors, "danger")
+        return render_template('index.html'), 422
     result = utils.normalize_url(url)
     if existed := db.check_url(conn, result):
         id = existed.get("id")
