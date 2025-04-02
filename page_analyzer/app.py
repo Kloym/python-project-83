@@ -1,4 +1,12 @@
-from flask import Flask, render_template, redirect, url_for, flash, request, abort
+from flask import (
+    Flask,
+    render_template,
+    redirect,
+    url_for,
+    flash,
+    request,
+    abort
+)
 from dotenv import load_dotenv
 from page_analyzer import utils, db
 import os

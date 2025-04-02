@@ -88,7 +88,14 @@ def check_url(conn, name):
         return cursor.fetchone()
 
 
-def insert_check(conn, url_id, status_code, h1=None, title=None, description=None):
+def insert_check(
+        conn,
+        url_id,
+        status_code,
+        h1=None,
+        title=None,
+        description=None
+):
     now = datetime.now().date()
     with conn.cursor(cursor_factory=RealDictCursor) as curs:
         curs.execute(
