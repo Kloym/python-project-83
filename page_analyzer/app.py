@@ -2,7 +2,6 @@ from flask import Flask, render_template, redirect, url_for, flash, request, abo
 from dotenv import load_dotenv
 from page_analyzer import utils, db
 import os
-import psycopg2
 import requests
 
 
